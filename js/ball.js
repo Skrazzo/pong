@@ -1,9 +1,9 @@
 export class Ball {
     constructor(ctx){
         // ball speed and direction
-        this.speed = 4; // in pixels
-        this.xd = 1;
-        this.yd = 1;
+        this.speed = 6; // in pixels
+        this.xd = -1;
+        this.yd = -1;
 
         this.radius = 10;
         
@@ -20,25 +20,7 @@ export class Ball {
 
     // this most likekly will need to move to the main.js
     move(){
-        // if right wall has been reached
-        if(this.x + this.radius >= this.ctx.canvas.width){
-            this.xd = -1;
-        }
-
-        // if left wall has been reached
-        if(this.x - this.radius <= 0){
-            this.xd = 1;
-        }
-
-        // if bottom has been reached
-        if(this.y + this.radius >= this.ctx.canvas.height){
-            this.yd = -1;
-        }
-
-        // if top has been reached
-        if(this.y - this.radius <= 0){
-            this.yd = 1;
-        }
+        
 
         
         this.x = this.x + (this.speed * this.xd);
