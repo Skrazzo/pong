@@ -31,7 +31,7 @@ class GameClass{
 
         // adding players and ball to the game
         this.ball = new Ball(this.ctx);
-        this.player1 = new Player(this.ctx, 10, 10);
+        this.player1 = new Player(this.ctx, 10, 20);
 
     }
 
@@ -40,23 +40,35 @@ class GameClass{
         // check if ball hits the walls
         // if right wall has been reached
         if(this.ball.x + this.ball.radius >= this.ctx.canvas.width){
-            this.ball.xd = -1;
+            this.ball.xd *= -1;
         }
 
         // if left wall has been reached
         if(this.ball.x - this.ball.radius <= 0){
-            this.ball.xd = 1;
+            this.ball.xd *= 1;
+            //this.pause = true;
         }
 
         // if bottom has been reached
         if(this.ball.y + this.ball.radius >= this.ctx.canvas.height){
-            this.ball.yd = -1;
+            this.ball.yd *= -1;
         }
 
         // if top has been reached
         if(this.ball.y - this.ball.radius <= 0){
-            this.ball.yd = 1;
+            this.ball.yd *= -1;
         }
+
+
+        // check player collision
+        // player 1
+        if(this.ball.x - this.ball.radius <= this.player1.x + this.player1.width){
+            if(this.ball.y >= this.player1.y && this.ball.y <= this.player1.y + this.player1.height){
+                this.ball.xd = 1;
+
+            }
+        }
+
 
         this.ball.move();
     }

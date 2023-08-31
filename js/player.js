@@ -1,5 +1,7 @@
 export class Player{
     constructor(ctx, startPosX, startPosY){
+        this.score = 0;
+
         this.x = startPosX;
         this.y = startPosY;
 

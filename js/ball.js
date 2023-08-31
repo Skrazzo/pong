@@ -3,7 +3,7 @@ export class Ball {
         // ball speed and direction
         this.speed = 6; // in pixels
         this.xd = -1;
-        this.yd = -1;
+        this.yd = -6;
 
         this.radius = 10;
         
