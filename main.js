@@ -1,5 +1,8 @@
 import { Ball } from "./js/ball.js";
+import { calc_ball_coll_part } from "./js/functions.js";
+import { InputHandler } from "./js/input.js";
 import { Player } from "./js/player.js";
+
 
 class GameClass{
     
@@ -22,7 +25,6 @@ class GameClass{
 
         this.ctx = canvas.getContext("2d");
         
-        
     }
 
     start(){
@@ -31,7 +33,12 @@ class GameClass{
 
         // adding players and ball to the game
         this.ball = new Ball(this.ctx);
-        this.player1 = new Player(this.ctx, 10, 20);
+
+        // specifiying player size, and adding them to the game
+        this.playerSize = [20, 100];
+
+        this.player1 = new Player(this.ctx, 10, 20, this.playerSize[0], this.playerSize[1], 'w', 's');
+        this.player2 = new Player(this.ctx, this.ctx.canvas.width - this.playerSize[0] - 10, 20, this.playerSize[0], this.playerSize[1], 'ArrowUp', 'ArrowDown');
 
     }
 
@@ -41,11 +48,12 @@ class GameClass{
         // if right wall has been reached
         if(this.ball.x + this.ball.radius >= this.ctx.canvas.width){
             this.ball.xd *= -1;
+            //this.pause = true;            
         }
 
         // if left wall has been reached
         if(this.ball.x - this.ball.radius <= 0){
-            this.ball.xd *= 1;
+            this.ball.xd *= -1;
             //this.pause = true;
         }
 
@@ -60,23 +68,53 @@ class GameClass{
         }
 
 
-        // check player collision
+        // check players and balls collision
         // player 1
         if(this.ball.x - this.ball.radius <= this.player1.x + this.player1.width){
             if(this.ball.y >= this.player1.y && this.ball.y <= this.player1.y + this.player1.height){
                 this.ball.xd = 1;
+                
+                switch(calc_ball_coll_part(this.playerSize[1], this.player1.y, this.ball.y)){
+                    case 1:
+                        // if paddle was going down, then increase yd by one, unless its already 2 or higher
+                        if(this.player1.dir() === 1) this.ball.yd += 1;
+                        if(this.player1.dir() === -1) this.ball.yd -= 1;
+                            
+                        
+                        break;
+                    case 2:
+                        
+                        this.ball.xd += 2;
+                        break;
 
+                    case 3:
+                        if(this.player1.dir() === 1) this.ball.yd += 1;
+                        if(this.player1.dir() === -1) this.ball.yd -= 1;
+                        
+                        break;
+                }
+                
+            }
+        }
+
+        // player2
+        if(this.ball.x + this.ball.radius >= this.player2.x){
+            if(this.ball.y >= this.player2.y && this.ball.y <= this.player2.y + this.player2.height){
+                this.ball.xd = -1;
             }
         }
 
 
         this.ball.move();
+        this.player1.move();
+        this.player2.move();
     }
     
     // request every element to draw
     draw(){
         this.ball.draw();
         this.player1.draw();
+        this.player2.draw();
     }
 
     // clear canvas, request update and draw functions

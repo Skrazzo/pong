@@ -1,9 +1,9 @@
 export class Ball {
     constructor(ctx){
         // ball speed and direction
-        this.speed = 6; // in pixels
+        this.speed = 4; // in pixels
         this.xd = -1;
-        this.yd = -6;
+        this.yd = -1;
 
         this.radius = 10;
         
@@ -20,12 +20,8 @@ export class Ball {
 
     // this most likekly will need to move to the main.js
     move(){
-        
-
-        
         this.x = this.x + (this.speed * this.xd);
         this.y = this.y + (this.speed * this.yd);
-
     }
 
     draw(){
