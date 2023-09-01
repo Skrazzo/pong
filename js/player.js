@@ -1,7 +1,7 @@
 import { InputHandler } from "./input.js";
 
 export class Player{
-    constructor(ctx, startPosX, startPosY, width, height, upKey, downKey){
+    constructor(ctx, startPosX, startPosY, width, height, upKey, downKey, anim_stepbackD){
         this.score = 0;
 
         // keys for movement
@@ -21,8 +21,15 @@ export class Player{
         // padle conf
         this.width = width;
         this.height = height;
-
         this.color = 'rgba(255,255,255)';
+
+        // when ball hits anim conf
+        this.anim_increment = 0;
+        this.anim_max_stepback = 3;
+        this.anim_stepback = 0;
+        this.anim_stepbackD = anim_stepbackD;
+
+
 
         // canvas contenxt and keypress listener
         this.ctx = ctx;
@@ -49,16 +56,34 @@ export class Player{
         }
     }
 
+    
+
     move(){
         // check players input
         this.input();
 
+        //////// animation start
+        // anim_inc is set to 0, so when needed that will be changed
+        
+        
+        if(this.anim_stepback >= this.anim_max_stepback){ // reached its max limit, increment needs to be reversed
+            this.anim_increment = -this.anim_increment;
+            this.anim_stepback += this.anim_increment;
+        }else{ // havent reached limit yet
+            this.anim_stepback += this.anim_increment;
+        }
+
+        if(this.anim_stepback === 0){
+            this.anim_increment = 0;
+        }
+        //////// animation end
+        
         this.y += this.speed;
     }
 
     draw(){
         this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.x, this.y, this.width, this.height);
+        this.ctx.fillRect(this.x + (this.anim_stepback * this.anim_stepbackD), this.y, this.width, this.height);
     }
 
     // function returns direction where current player is moving
