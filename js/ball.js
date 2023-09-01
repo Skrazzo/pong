@@ -1,9 +1,11 @@
+import { get_rand_pos_neg } from "./functions.js";
+
 export class Ball {
     constructor(ctx){
         // ball speed and direction
         this.speed = 4; // in pixels
-        this.xd = -1;
-        this.yd = -1;
+        this.xd = get_rand_pos_neg();
+        this.yd = get_rand_pos_neg();
         // limitations for x and y directions
         this.xd_limit = 3;
         this.yd_limit = 2.5;
@@ -18,11 +20,23 @@ export class Ball {
 
 
         this.color = 'rgb(200,200,200)';
-        //this.color = 'red';
+        
 
         // canvas api
         this.ctx = ctx;
     }
+
+    restart(){
+        // put ball in the center of the canvas
+        this.x = this.ctx.canvas.width / 2;
+        this.y = this.ctx.canvas.height / 2;
+
+        // get new random balls flying direction        
+        this.xd = get_rand_pos_neg();
+        this.yd = get_rand_pos_neg();
+    }
+
+    
 
     // this most likekly will need to move to the main.js
     move(){

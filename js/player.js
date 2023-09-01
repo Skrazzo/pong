@@ -4,6 +4,10 @@ export class Player{
     constructor(ctx, startPosX, startPosY, width, height, upKey, downKey, anim_stepbackD){
         this.score = 0;
 
+        // default positions
+        this.defX = startPosX;
+        this.defY = startPosY;
+
         // keys for movement
         this.down = downKey;
         this.up = upKey;
@@ -25,7 +29,7 @@ export class Player{
 
         // when ball hits anim conf
         this.anim_increment = 0;
-        this.anim_max_stepback = 3;
+        this.anim_max_stepback = 5;
         this.anim_stepback = 0;
         this.anim_stepbackD = anim_stepbackD;
 
@@ -37,17 +41,28 @@ export class Player{
         
     }
 
+    restart(){
+        this.x = this.defX;
+        this.y = this.defY;
+    }
+
     input(){
+
+
         if(this.keyInput.pressedKeys.indexOf(this.down) !== -1){ // if down is pressed
             if(this.speed < this.max_speed){
                 this.speed += this.speed_increment;
             }
+
+            if((this.y + this.height) >= (this.ctx.canvas.height - 10)) this.speed = 0;
         }
 
         if(this.keyInput.pressedKeys.indexOf(this.up) !== -1){ // if up is pressed
-            if(this.speed > -this.max_speed){
+            if(this.speed > -this.max_speed ){
                 this.speed -= this.speed_increment;
             }
+
+            if(this.y <= 10) this.speed = 0;
         }
 
         // if none of the both keys are pressed, then we need to stop the padle
@@ -91,6 +106,10 @@ export class Player{
         if(this.speed < 0) return -1; // going up
         if(this.speed > 0) return 1; // going down
         if(this.speed === 0) return 0; // standing
+    }
+
+    add_score(){
+        this.score += 1;
     }
 }
 

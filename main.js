@@ -1,13 +1,9 @@
 import { Ball } from "./js/ball.js";
 import { calc_ball_coll_part } from "./js/functions.js";
-import { InputHandler } from "./js/input.js";
 import { Player } from "./js/player.js";
 
 
 class GameClass{
-    
-    
-
     
     constructor(){
         this.pause = false;
@@ -15,7 +11,7 @@ class GameClass{
         this.lastFrameTime = Date.now();
 
         // canvas size
-        this.width = 700;
+        this.width = 800;
         this.height = 500;
 
         // getting canvas ready
@@ -37,9 +33,17 @@ class GameClass{
         // specifiying player size, and adding them to the game
         this.playerSize = [20, 100];
 
-        this.player1 = new Player(this.ctx, 10, 100, this.playerSize[0], this.playerSize[1], 'w', 's', -1);
-        this.player2 = new Player(this.ctx, this.ctx.canvas.width - this.playerSize[0] - 10, 20, this.playerSize[0], this.playerSize[1], 'ArrowUp', 'ArrowDown', 1);
+        this.player1 = new Player(this.ctx, 10, (this.ctx.canvas.height / 2) - (this.playerSize[1] / 2), this.playerSize[0], this.playerSize[1], 'w', 's', -1);
+        this.player2 = new Player(this.ctx, this.ctx.canvas.width - this.playerSize[0] - 10, (this.ctx.canvas.height / 2) - (this.playerSize[1] / 2), this.playerSize[0], this.playerSize[1], 'ArrowUp', 'ArrowDown', 1);
 
+    }
+
+    draw_score(){
+        this.ctx.font = "30px pixel";
+        this.ctx.fillStyle = "white"; // Fill color
+
+        // Write text on the canvas
+        this.ctx.fillText(this.player1.score + ' ' + this.player2.score, 50, 50); // Fill text
     }
 
     // update every element positions and states
@@ -48,13 +52,17 @@ class GameClass{
         // if right wall has been reached
         if(this.ball.x + this.ball.radius >= this.ctx.canvas.width){
             this.ball.xd *= -1;
-            this.pause = true;         
+            this.player1.add_score();  
+
+            this.restart();
         }
 
         // if left wall has been reached
         if(this.ball.x - this.ball.radius <= 0){
             this.ball.xd *= -1;
-            this.pause = true;
+            this.player2.add_score();
+
+            this.restart();
         }
 
         // if bottom has been reached
@@ -77,7 +85,7 @@ class GameClass{
                 this.ball.xd *= -1;
                 
                 this.ball_player_collision(this.player1, 1);
-                this.player1.anim_increment = 0.5; // start the animation
+                this.player1.anim_increment = 1; // start the animation
                 
             }
         }
@@ -93,8 +101,6 @@ class GameClass{
 
 
         this.ball.move();
-        console.log('xd', this.ball.xd);
-        console.log('yd', this.ball.yd);
         this.player1.move();
         this.player2.move();
     }
@@ -139,6 +145,7 @@ class GameClass{
         this.ball.draw();
         this.player1.draw();
         this.player2.draw();
+        this.draw_score();
     }
 
     // clear canvas, request update and draw functions
@@ -180,9 +187,16 @@ class GameClass{
     
     }
 
-    info(){
-        
+    restart(){
+        this.pause = true;
+        setTimeout(() => {
+            this.player1.restart();
+            this.player2.restart();
+            this.ball.restart();
+            this.pause = false;
+        }, 500);
     }
+
 }
 
 
@@ -194,9 +208,4 @@ window.addEventListener("load", () => {
     
     game.start();
     game.animate();
-
-
-
-    //game.info();
-
 });
