@@ -1,10 +1,13 @@
 @font-face {
     font-family: pixel;
-    src: url('./pixel.ttf');
+    src: url('./assets/pixel.ttf');
 }
 
 body{
     background-color: rgb(10,10,10);
+    display: flex;
+    justify-content: center;
+    margin: 0;
 }
 
 canvas{
@@ -16,3 +19,25 @@ p{
     color: white;
     font-family: pixel;
 }
+
+
+
+error{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(10,10,10);
+    display: none;
+    text-align: center;
+}
+
+@media (max-height: 800px) or (max-width: 1200px) {
+    error{
+        display: block;
+    }
+
+    .game{
+        display: none;
+    }
+}
+

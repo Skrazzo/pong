@@ -2,6 +2,8 @@ import { get_rand_pos_neg } from "./functions.js";
 
 export class Ball {
     constructor(ctx){
+        
+
         // ball speed and direction
         this.speed = 4; // in pixels
         this.xd = get_rand_pos_neg();

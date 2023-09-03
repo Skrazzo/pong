@@ -1,18 +1,26 @@
 import { Ball } from "./js/ball.js";
 import { calc_ball_coll_part } from "./js/functions.js";
+import { InputHandler } from "./js/input.js";
 import { Player } from "./js/player.js";
 
 
 class GameClass{
     
     constructor(){
+        // sounds
+        this.sounds = true;
+        this.hitAudio = new Audio('./assets/hit.wav');
+        this.hitAudio.volume = 1;
+
         this.pause = false;
+        this.userPause = true;
         this.frameRate = 60;
         this.lastFrameTime = Date.now();
 
         // canvas size
         this.width = 800;
-        this.height = 500;
+        this.height = 600;
+        this.trails = false;
 
         // getting canvas ready
         const canvas = document.getElementById('canvas');
@@ -21,6 +29,20 @@ class GameClass{
 
         this.ctx = canvas.getContext("2d");
         
+        // p for pause, and m for sound 
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'p'){ 
+                this.userPause = !this.userPause;
+            }
+
+            if(e.key === 'm'){
+                this.sounds = !this.sounds;
+            }
+
+            if(e.key === 't'){
+                this.trails = !this.trails;
+            }
+        });
     }
 
     start(){
@@ -39,6 +61,8 @@ class GameClass{
     }
 
     draw_score(){
+        
+
         this.ctx.font = "50px pixel";
         this.ctx.fillStyle = "white"; // Fill color
 
@@ -49,6 +73,34 @@ class GameClass{
 
         // Write text on the canvas
         this.ctx.fillText(scoreText, (this.ctx.canvas.width - textWidth) / 2 , 50); // Fill text
+    }
+
+    draw_pause(){
+        this.ctx.fillStyle = 'rgb(10,10,10)';
+        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+        // write paused
+        this.ctx.font = "50px pixel";
+        this.ctx.fillStyle = "white"; // Fill color
+        
+        var text = 'PAUSED';
+        var textWidth = this.ctx.measureText(text).width;
+
+        this.ctx.fillText(text, (this.ctx.canvas.width - textWidth) / 2 , 100); // Fill text
+
+        // sound
+        this.ctx.font = "30px pixel";
+        this.ctx.fillStyle = "gray"; // Fill color
+        text = 'Sound ' + ((this.sounds) ? 'on' : 'off') + ' (m)';
+        textWidth = this.ctx.measureText(text).width;
+
+        this.ctx.fillText(text, (this.ctx.canvas.width - textWidth) / 2 , 170); // Fill text
+
+        // trails
+        text = 'Trails ' + ((this.trails) ? 'on' : 'off') + ' (t)';
+        textWidth = this.ctx.measureText(text).width;
+
+        this.ctx.fillText(text, (this.ctx.canvas.width - textWidth) / 2 , 210); // Fill text
     }
 
     draw_lines(){
@@ -88,12 +140,16 @@ class GameClass{
         if(this.ball.y + this.ball.radius >= this.ctx.canvas.height){
             this.ball.yd *= -1;
             this.ball.xd = (this.ball.xd > 0) ? this.ball.xd - (this.ball.xd_increment / 4) : this.ball.xd + (this.ball.xd_increment / 4);
+
+            if(this.sounds) this.hitAudio.play();
         }
 
         // if top has been reached
         if(this.ball.y - this.ball.radius <= 0){
             this.ball.yd *= -1;
             this.ball.xd = (this.ball.xd > 0) ? this.ball.xd - (this.ball.xd_increment / 4) : this.ball.xd + (this.ball.xd_increment / 4);
+            
+            if(this.sounds) this.hitAudio.play();
         }
 
 
@@ -105,6 +161,7 @@ class GameClass{
                 
                 this.ball_player_collision(this.player1, 1);
                 this.player1.anim_increment = 1; // start the animation
+                if(this.sounds) this.hitAudio.play();
                 
             }
         }
@@ -115,6 +172,7 @@ class GameClass{
                 this.ball.xd *= -1;
                 this.ball_player_collision(this.player2, 2);
                 this.player2.anim_increment = 0.5; // start the animation
+                if(this.sounds) this.hitAudio.play();
             }
         }
 
@@ -171,7 +229,7 @@ class GameClass{
     // clear canvas, request update and draw functions
     animate(){
 
-        if(!this.pause){
+        if(!this.pause && !this.userPause){
             /*
                 Takes current time, subtracts from the last update
                 checks if its time to update the frame and does if needed
@@ -193,6 +251,9 @@ class GameClass{
                 this.lastFrameTime = Date.now();
             }
 
+        }else{
+
+            if(this.userPause) this.draw_pause();
         }
 
         
@@ -202,12 +263,21 @@ class GameClass{
     }
 
     // clear canvas
-    clear(){
-        this.ctx.clearRect(0, 0, this.width, this.height);
-    
+    clear(fully = false){
+        if(this.trails){
+            this.ctx.fillStyle = 'rgba(10,10,10,0.6)';
+            this.ctx.fillRect(0,0,this.width, this.height);
+        }else{
+            this.ctx.clearRect(0, 0, this.width, this.height);
+        }
+
+        if(fully) this.ctx.clearRect(0, 0, this.width, this.height);
     }
 
+    
+
     restart(){
+
         this.pause = true;
         setTimeout(() => {
             this.player1.restart();
