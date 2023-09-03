@@ -39,11 +39,30 @@ class GameClass{
     }
 
     draw_score(){
-        this.ctx.font = "30px pixel";
+        this.ctx.font = "50px pixel";
         this.ctx.fillStyle = "white"; // Fill color
 
+        const score1 = (this.player1.score < 10) ? '0' + this.player1.score : this.player1.score;
+        const score2 = (this.player2.score < 10) ? '0' + this.player2.score : this.player2.score;
+        const scoreText = score1 + '   ' + score2;
+        const textWidth = this.ctx.measureText(scoreText).width;
+
         // Write text on the canvas
-        this.ctx.fillText(this.player1.score + ' ' + this.player2.score, 50, 50); // Fill text
+        this.ctx.fillText(scoreText, (this.ctx.canvas.width - textWidth) / 2 , 50); // Fill text
+    }
+
+    draw_lines(){
+        this.ctx.fillStyle = "rgb(180,180,180)"; // Fill color
+        const width = 10;
+        const height = 10;
+        const gap = 10;
+        const lines = Math.ceil( this.ctx.canvas.height / (gap + height));
+
+        for(var i = 0; i < lines; i++){
+            this.ctx.fillRect((this.ctx.canvas.width - width) / 2, (height + gap) * i, width, height);
+        }
+        
+        
     }
 
     // update every element positions and states
@@ -142,6 +161,7 @@ class GameClass{
 
     // request every element to draw
     draw(){
+        this.draw_lines();
         this.ball.draw();
         this.player1.draw();
         this.player2.draw();
@@ -194,7 +214,7 @@ class GameClass{
             this.player2.restart();
             this.ball.restart();
             this.pause = false;
-        }, 500);
+        }, 750);
     }
 
 }
